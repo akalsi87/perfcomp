@@ -8,7 +8,7 @@
 
 #include <perfcomp/version.h>
 
-TEST_FUNC( Version )
+TEST_FUNC( LibVersion )
 {
     TEST_TRUE( pfcmpMajorVersion() == 0 );
     TEST_TRUE( pfcmpMinorVersion() == 0 );
@@ -17,5 +17,5 @@ TEST_FUNC( Version )
 
 void SetupTests(void)
 {
-    REG_TEST( Version );
+    REG_TEST( LibVersion );
 }
