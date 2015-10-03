@@ -46,12 +46,16 @@ set(perfcomp_lib_compat_ver
 
 set(perfcomp_exp_hdr 
     include/perfcomp/builddef.h;
-    include/perfcomp/version.h)
+    include/perfcomp/version.h;
+    include/perfcomp/time/cpu.h;
+    include/perfcomp/time/wall.h)
 
 set(perfcomp_int_hdr )
 
 set(perfcomp_src
-    src/version.c)
+    src/version.c
+    src/time/cpu.c
+    src/time/wall.c)
 
 add_lib(perfcomp SHARED ${perfcomp_src} ${perfcomp_int_hdr} ${perfcomp_exp_hdr})
 add_lib_build_def(perfcomp PERFCOMP_BUILD)
