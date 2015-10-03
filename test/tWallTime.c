@@ -26,7 +26,7 @@ TEST_FUNC( WallAddSub )
     TEST_TRUE( c.val >= a.val );
 
     c = pfcmpSubWallTime(a, b);
-    TEST_TRUE( c.val =< a.val );
+    TEST_TRUE( c.val <= a.val );
 }
 
 void SetupTests(void)
