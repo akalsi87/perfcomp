@@ -49,18 +49,22 @@ void InPlaceWallToMicros(const pfWallTimePoint* p, double* val)
 
 void InitWallTimePoint(pfWallTimePoint* p)
 {
+    p->val = 0;
 }
 
 void InPlaceAddWallTime(pfWallTimePoint* pa, const pfWallTimePoint* pb)
 {
+    pa->val += pb->val;
 }
 
 void InPlaceSubWallTime(pfWallTimePoint* pa, const pfWallTimePoint* pb)
 {
+    pa->val -= pb->val;
 }
 
 void InPlaceWallToMicros(const pfWallTimePoint* p, double* val)
 {
+    *val = p->val;
 }
 
 #endif//defined(_MSC_VER)
