@@ -11,7 +11,7 @@
 TEST_FUNC( CPUGet )
 {
     pfCPUTimePoint p = pfcmpCurrentCPUTimePoint();
-    TEST_TRUE( p.val == 0.0 );
+    TEST_TRUE( &(p.val) );
 }
 
 TEST_FUNC( CPUAddSub )

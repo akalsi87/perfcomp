@@ -5,25 +5,88 @@
 
 #include <perfcomp/time/wall.h>
 
+#if defined(_MSC_VER)
+
+#include <Windows.h>
+
+double PCFreq()
+{
+    static double freq = -1.0;
+    if (freq == -1.0) {
+        LARGE_INTEGER li;
+        QueryPerformanceFrequency(&li);
+        freq = (double)(li.QuadPart);
+    }
+    return freq;
+}
+
+#define AS_LONG_LONG(x) *(LONGLONG*)(&(x))
+
+void InitWallTimePoint(pfWallTimePoint* p)
+{
+    LARGE_INTEGER li;
+    QueryPerformanceCounter(&li);
+    AS_LONG_LONG(p->val) = li.QuadPart;
+}
+
+void InPlaceAddWallTime(pfWallTimePoint* pa, const pfWallTimePoint* pb)
+{
+    AS_LONG_LONG(pa->val) += AS_LONG_LONG(pb->val);
+}
+
+void InPlaceSubWallTime(pfWallTimePoint* pa, const pfWallTimePoint* pb)
+{
+    AS_LONG_LONG(pa->val) -= AS_LONG_LONG(pb->val);
+}
+
+void InPlaceWallToMicros(const pfWallTimePoint* p, double* val)
+{
+    *val = AS_LONG_LONG(p->val) / PCFreq();
+    *val *= 1.0e6;
+}
+
+#else//UNIX
+
+void InitWallTimePoint(pfWallTimePoint* p)
+{
+}
+
+void InPlaceAddWallTime(pfWallTimePoint* pa, const pfWallTimePoint* pb)
+{
+}
+
+void InPlaceSubWallTime(pfWallTimePoint* pa, const pfWallTimePoint* pb)
+{
+}
+
+void InPlaceWallToMicros(const pfWallTimePoint* p, double* val)
+{
+}
+
+#endif//defined(_MSC_VER)
+
 pfWallTimePoint pfcmpCurrentWallTimePoint()
 {
-    pfWallTimePoint t = { 0.0 };
+    pfWallTimePoint t;
+    InitWallTimePoint(&t);
     return t;
 }
 
 pfWallTimePoint pfcmpAddWallTime(pfWallTimePoint a, pfWallTimePoint b)
 {
-    a.val += b.val;
+    InPlaceAddWallTime(&a, &b);
     return a;
 }
 
 pfWallTimePoint pfcmpSubWallTime(pfWallTimePoint a, pfWallTimePoint b)
 {
-    a.val -= b.val;
+    InPlaceSubWallTime(&a, &b);
     return a;
 }
 
 double pfcmpWallTimeToMicros(pfWallTimePoint a)
 {
-    return a.val;
+    double us;
+    InPlaceWallToMicros(&a, &us);
+    return us;
 }

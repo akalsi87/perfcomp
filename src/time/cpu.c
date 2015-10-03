@@ -5,25 +5,81 @@
 
 #include <perfcomp/time/cpu.h>
 
+#if defined(_MSC_VER)
+
+#include <Windows.h>
+
+void InitCPUTimePoint(pfCPUTimePoint* p)
+{
+    p->val = 0.0;
+}
+
+void InPlaceAddCPUTime(pfCPUTimePoint* pa, const pfCPUTimePoint* pb)
+{
+    pa->val += pb->val;
+}
+
+void InPlaceSubCPUTime(pfCPUTimePoint* pa, const pfCPUTimePoint* pb)
+{
+    pa->val -= pb->val;
+}
+
+void InPlaceCPUToMicros(const pfCPUTimePoint* p, double* val)
+{
+    *val = p->val;
+}
+
+#elif defined(__unix__) || defined(__unix) || defined(unix) || (defined(__APPLE__) && defined(__MACH__))
+
+#include <unistd.h>
+#include <sys/resource.h>
+#include <sys/times.h>
+#include <time.h>
+
+void InitCPUTimePoint(pfCPUTimePoint* p)
+{
+    p->val = 0.0;
+}
+
+void InPlaceAddCPUTime(pfCPUTimePoint* pa, const pfCPUTimePoint* pb)
+{
+    pa->val += pb->val;
+}
+
+void InPlaceSubCPUTime(pfCPUTimePoint* pa, const pfCPUTimePoint* pb)
+{
+    pa->val -= pb->val;
+}
+
+void InPlaceCPUToMicros(const pfCPUTimePoint* p, double* val)
+{
+    *val = p->val;
+}
+
+#endif//defined(_MSC_VER)
+
 pfCPUTimePoint pfcmpCurrentCPUTimePoint()
 {
-    pfCPUTimePoint t = { 0.0 };
+    pfCPUTimePoint t;
+    InitCPUTimePoint(&t);
     return t;
 }
 
 pfCPUTimePoint pfcmpAddCPUTime(pfCPUTimePoint a, pfCPUTimePoint b)
 {
-    a.val += b.val;
+    InPlaceAddCPUTime(&a, &b);
     return a;
 }
 
 pfCPUTimePoint pfcmpSubCPUTime(pfCPUTimePoint a, pfCPUTimePoint b)
 {
-    a.val -= b.val;
+    InPlaceSubCPUTime(&a, &b);
     return a;
 }
 
 double pfcmpCPUTimeToMicros(pfCPUTimePoint a)
 {
-    return a.val;
+    double us;
+    InPlaceCPUToMicros(&a, &us);
+    return us;
 }
