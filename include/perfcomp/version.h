@@ -6,7 +6,7 @@
 #ifndef PERFCOMP_VERSION_H
 #define PERFCOMP_VERSION_H
 
-#include <perfcomp/builddef.h>
+#include <perfcomp/exportsym.h>
 
 PERFCOMP_API
 /*!

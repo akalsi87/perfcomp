@@ -45,23 +45,36 @@ set(perfcomp_lib_compat_ver
     "${perfcomp_maj_ver}.${perfcomp_min_ver}")
 
 set(perfcomp_exp_hdr 
-    include/perfcomp/builddef.h;
-    include/perfcomp/version.h)
+    include/perfcomp/version.h;
+    include/perfcomp/time/cpu.h;
+    include/perfcomp/time/wall.h)
 
 set(perfcomp_int_hdr )
 
 set(perfcomp_src
-    src/version.c)
+    src/version.c
+    src/time/cpu.c
+    src/time/wall.c)
 
 add_lib(perfcomp SHARED ${perfcomp_src} ${perfcomp_int_hdr} ${perfcomp_exp_hdr})
-add_lib_build_def(perfcomp PERFCOMP_BUILD)
+add_lib_build_def(perfcomp include/perfcomp/exportsym.h PERFCOMP)
 add_comp_def(perfcomp PERFCOMP_MAJ=${perfcomp_maj_ver})
 add_comp_def(perfcomp PERFCOMP_MIN=${perfcomp_min_ver})
 add_comp_def(perfcomp PERFCOMP_PAT=${perfcomp_pat_ver})
 link_libs(perfcomp )
 set_tgt_ver(perfcomp ${perfcomp_lib_ver} ${perfcomp_lib_compat_ver})
 
+add_lib(perfcomp_s STATIC ${perfcomp_src} ${perfcomp_int_hdr} ${perfcomp_exp_hdr})
+add_lib_build_def(perfcomp_s include/perfcomp/exportsym.h PERFCOMP)
+add_comp_def(perfcomp_s PERFCOMP_MAJ=${perfcomp_maj_ver})
+add_comp_def(perfcomp_s PERFCOMP_MIN=${perfcomp_min_ver})
+add_comp_def(perfcomp_s PERFCOMP_PAT=${perfcomp_pat_ver})
+link_libs(perfcomp_s )
+set_tgt_ver(perfcomp_s ${perfcomp_lib_ver} ${perfcomp_lib_compat_ver})
+
 # -- install
 
 install_hdr(${perfcomp_exp_hdr})
 install_tgt(perfcomp)
+install_tgt(perfcomp_s)
+

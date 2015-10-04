@@ -7,6 +7,6 @@
 
 int pfcmpMajorVersion() { return PERFCOMP_MAJ; }
 
-int pfcmpMinorVersion() { return PERFCOMP_MIN; } 
+int pfcmpMinorVersion() { return PERFCOMP_MIN; }
 
 int pfcmpPatchVersion() { return PERFCOMP_PAT; }

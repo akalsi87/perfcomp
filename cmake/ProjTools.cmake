@@ -377,32 +377,34 @@ endif(USE_CODE_COV)
 endfunction(add_lib)
 
 # -- add_lib_build_def: Add library compile definition
-function(add_lib_build_def tgt buildTemplate)
+function(add_lib_build_def tgt file buildTemplate)
   get_target_property(tgttype ${tgt} TYPE)
   string(COMPARE EQUAL ${tgttype} "SHARED_LIBRARY" is_shared)
   string(COMPARE EQUAL ${tgttype} "STATIC_LIBRARY" is_static)
-  file(WRITE "${PROJ_INCLUDE_DIR}/exportsym.h" "/* exportsym.h */\n")
+  file(WRITE ${file}
+    "/* Export symbol definitions */\n"
+    "#if defined(${buildTemplate}_LINK_STATIC)\n"
+    "#  define ${buildTemplate}_API \n"
+    "#elif defined(${buildTemplate}_BUILD)\n"
+    "#  if defined(_MSC_VER)\n"
+    "#    define ${buildTemplate}_API __declspec(dllexport)\n"
+    "#  else\n"
+    "#    define ${buildTemplate}_API __attribute__((__visibility__(\"default\")))\n"
+    "#  endif\n"
+    "#else\n"
+    "#  if defined(_MSC_VER)\n"
+    "#    define ${buildTemplate}_API __declspec(dllimport)\n"
+    "#  else\n"
+    "#    define ${buildTemplate}_API \n"
+    "#  endif\n"
+    "#endif/*defined(${buildTemplate}_LINK_STATIC)*/\n")
   if(is_shared)
     target_compile_definitions(${tgt} PRIVATE "${buildTemplate}_BUILD")
-    file(APPEND "${PROJ_INCLUDE_DIR}/exportsym.h"
-      "#if defined(${buildTemplate}_BUILD)\n"
-      "#  if defined(_MSC_VER)\n"
-      "#    define ${buildTemplate}_API __declspec(dllexport)\n"
-      "#  else\n"
-      "#    define ${buildTemplate}_API __attribute__((__visibility__(\"default\")))\n"
-      "#  endif\n"
-      "#else\n"
-      "#  if defined(_MSC_VER)\n"
-      "#    define ${buildTemplate}_API __declspec(dllimport)\n"
-      "#  else\n"
-      "#    define ${buildTemplate}_API \n"
-      "#  endif\n"
-      "#endif/*defined(${buildTemplate}_BUILD)*/\n")
   endif()
   if(is_static)
-    file(APPEND "${PROJ_INCLUDE_DIR}/exportsym.h"
-      "#define ${buildTemplate}_API \n")
+    target_compile_definitions(${tgt} PRIVATE "${buildTemplate}_LINK_STATIC")
   endif()
+  install_hdr(${file})
 endfunction(add_lib_build_def)
 
 # -- link_libs: Link to libraries (target_link_libraries mimic)
