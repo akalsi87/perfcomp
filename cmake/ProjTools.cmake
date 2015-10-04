@@ -377,11 +377,31 @@ endif(USE_CODE_COV)
 endfunction(add_lib)
 
 # -- add_lib_build_def: Add library compile definition
-function(add_lib_build_def tgt buildSym)
+function(add_lib_build_def tgt buildTemplate)
   get_target_property(tgttype ${tgt} TYPE)
   string(COMPARE EQUAL ${tgttype} "SHARED_LIBRARY" is_shared)
+  string(COMPARE EQUAL ${tgttype} "STATIC_LIBRARY" is_static)
+  file(WRITE "${PROJ_INCLUDE_DIR}/exportsym.h" "/* exportsym.h */\n")
   if(is_shared)
-    target_compile_definitions(${tgt} PRIVATE ${buildSym})
+    target_compile_definitions(${tgt} PRIVATE "${buildTemplate}_BUILD")
+    file(APPEND "${PROJ_INCLUDE_DIR}/exportsym.h"
+      "#if defined(${buildTemplate}_BUILD)\n"
+      "#  if defined(_MSC_VER)\n"
+      "#    define ${buildTemplate}_API __declspec(dllexport)\n"
+      "#  else\n"
+      "#    define ${buildTemplate}_API __attribute__((__visibility__(\"default\")))\n"
+      "#  endif\n"
+      "#else\n"
+      "#  if defined(_MSC_VER)\n"
+      "#    define ${buildTemplate}_API __declspec(dllimport)\n"
+      "#  else\n"
+      "#    define ${buildTemplate}_API \n"
+      "#  endif\n"
+      "#endif/*defined(${buildTemplate}_BUILD)*/\n")
+  endif()
+  if(is_static)
+    file(APPEND "${PROJ_INCLUDE_DIR}/exportsym.h"
+      "#define ${buildTemplate}_API \n")
   endif()
 endfunction(add_lib_build_def)
 
