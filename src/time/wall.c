@@ -9,7 +9,7 @@
 
 #include <Windows.h>
 
-double PCFreq()
+static double PCFreq()
 {
     static double freq = -1.0;
     if (freq == -1.0) {
@@ -22,24 +22,24 @@ double PCFreq()
 
 #define AS_LONG_LONG(x) *(LONGLONG*)(&(x))
 
-void InitWallTimePoint(pfWallTimePoint* p)
+static void InitWallTimePoint(pfWallTimePoint* p)
 {
     LARGE_INTEGER li;
     QueryPerformanceCounter(&li);
     AS_LONG_LONG(p->val) = li.QuadPart;
 }
 
-void InPlaceAddWallTime(pfWallTimePoint* pa, const pfWallTimePoint* pb)
+static void InPlaceAddWallTime(pfWallTimePoint* pa, const pfWallTimePoint* pb)
 {
     AS_LONG_LONG(pa->val) += AS_LONG_LONG(pb->val);
 }
 
-void InPlaceSubWallTime(pfWallTimePoint* pa, const pfWallTimePoint* pb)
+static void InPlaceSubWallTime(pfWallTimePoint* pa, const pfWallTimePoint* pb)
 {
     AS_LONG_LONG(pa->val) -= AS_LONG_LONG(pb->val);
 }
 
-void InPlaceWallToMicros(const pfWallTimePoint* p, double* val)
+static void InPlaceWallToMicros(const pfWallTimePoint* p, double* val)
 {
     *val = AS_LONG_LONG(p->val) / PCFreq();
     *val *= 1.0e6;
@@ -47,22 +47,22 @@ void InPlaceWallToMicros(const pfWallTimePoint* p, double* val)
 
 #else//UNIX
 
-void InitWallTimePoint(pfWallTimePoint* p)
+static void InitWallTimePoint(pfWallTimePoint* p)
 {
     p->val = 0;
 }
 
-void InPlaceAddWallTime(pfWallTimePoint* pa, const pfWallTimePoint* pb)
+static void InPlaceAddWallTime(pfWallTimePoint* pa, const pfWallTimePoint* pb)
 {
     pa->val += pb->val;
 }
 
-void InPlaceSubWallTime(pfWallTimePoint* pa, const pfWallTimePoint* pb)
+static void InPlaceSubWallTime(pfWallTimePoint* pa, const pfWallTimePoint* pb)
 {
     pa->val -= pb->val;
 }
 
-void InPlaceWallToMicros(const pfWallTimePoint* p, double* val)
+static void InPlaceWallToMicros(const pfWallTimePoint* p, double* val)
 {
     *val = p->val;
 }

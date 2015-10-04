@@ -9,22 +9,22 @@
 
 #include <Windows.h>
 
-void InitCPUTimePoint(pfCPUTimePoint* p)
+static void InitCPUTimePoint(pfCPUTimePoint* p)
 {
     p->val = 0.0;
 }
 
-void InPlaceAddCPUTime(pfCPUTimePoint* pa, const pfCPUTimePoint* pb)
+static void InPlaceAddCPUTime(pfCPUTimePoint* pa, const pfCPUTimePoint* pb)
 {
     pa->val += pb->val;
 }
 
-void InPlaceSubCPUTime(pfCPUTimePoint* pa, const pfCPUTimePoint* pb)
+static void InPlaceSubCPUTime(pfCPUTimePoint* pa, const pfCPUTimePoint* pb)
 {
     pa->val -= pb->val;
 }
 
-void InPlaceCPUToMicros(const pfCPUTimePoint* p, double* val)
+static void InPlaceCPUToMicros(const pfCPUTimePoint* p, double* val)
 {
     *val = p->val;
 }
@@ -36,22 +36,22 @@ void InPlaceCPUToMicros(const pfCPUTimePoint* p, double* val)
 #include <sys/times.h>
 #include <time.h>
 
-void InitCPUTimePoint(pfCPUTimePoint* p)
+static void InitCPUTimePoint(pfCPUTimePoint* p)
 {
     p->val = 0.0;
 }
 
-void InPlaceAddCPUTime(pfCPUTimePoint* pa, const pfCPUTimePoint* pb)
+static void InPlaceAddCPUTime(pfCPUTimePoint* pa, const pfCPUTimePoint* pb)
 {
     pa->val += pb->val;
 }
 
-void InPlaceSubCPUTime(pfCPUTimePoint* pa, const pfCPUTimePoint* pb)
+static void InPlaceSubCPUTime(pfCPUTimePoint* pa, const pfCPUTimePoint* pb)
 {
     pa->val -= pb->val;
 }
 
-void InPlaceCPUToMicros(const pfCPUTimePoint* p, double* val)
+static void InPlaceCPUToMicros(const pfCPUTimePoint* p, double* val)
 {
     *val = p->val;
 }
