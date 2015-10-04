@@ -18,17 +18,25 @@ create_test     (tCPUTime)
 # Test against the static library
 #
 add_definitions("-DPERFCOMP_LINK_STATIC")
-add_test_exe    (tPerfcompVersion_s tPerfcompVersion.c)
+
+macro(copyrenamefile orig new)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${orig} ${CMAKE_CURRENT_SOURCE_DIR}/${new} COPYONLY)
+endmacro()
+
+copyrenamefile  (tPerfcompVersion.c tPerfcompVersion_s.c)
+add_test_exe    (tPerfcompVersion_s tPerfcompVersion_s.c)
 test_link_libs  (tPerfcompVersion_s perfcomp_s)
 create_test     (tPerfcompVersion_s)
 
 
-add_test_exe    (tWallTime_s tWallTime.c)
+copyrenamefile  (tWallTime.c tWallTime_s.c)
+add_test_exe    (tWallTime_s tWallTime_s.c)
 test_link_libs  (tWallTime_s perfcomp_s)
 create_test     (tWallTime_s)
 
 
-add_test_exe    (tCPUTime_s tCPUTime.c)
+copyrenamefile  (tCPUTime.c tCPUTime_s.c)
+add_test_exe    (tCPUTime_s tCPUTime_s.c)
 test_link_libs  (tCPUTime_s perfcomp_s)
 create_test     (tCPUTime_s)
 
